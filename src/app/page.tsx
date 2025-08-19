@@ -1,103 +1,123 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useChat } from '@ai-sdk/react';
+import { Bot } from 'lucide-react';
+import Link from 'next/link';
+import React, { useState } from 'react';
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer';
+import { Conversation, ConversationContent, ConversationScrollButton } from '@/components/ui/shadcn-io/ai/conversation';
+import { Message, MessageAvatar, MessageContent } from '@/components/ui/shadcn-io/ai/message';
+import {
+  PromptInput,
+  PromptInputModelSelect,
+  PromptInputModelSelectContent,
+  PromptInputModelSelectItem,
+  PromptInputModelSelectTrigger,
+  PromptInputModelSelectValue,
+  PromptInputSubmit,
+  PromptInputTextarea,
+  PromptInputToolbar,
+  PromptInputTools,
+} from '@/components/ui/shadcn-io/ai/prompt-input';
+
+const models = [{ id: 'gpt-5-chat', name: 'OpenAI GPT-5 Chat' }];
+
+export default function HomePage() {
+  const { messages, sendMessage } = useChat();
+  const [input, setInput] = useState('');
+  const [model, setModel] = useState<string>(models[0].id);
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <Drawer>
+      <div className="flex h-screen w-full items-center justify-center">
+        <DrawerTrigger>
+          <div className="flex items-center justify-center">
+            <Bot size={20} />
+            <div className="ml-2">Chatbot</div>
+          </div>
+        </DrawerTrigger>
+      </div>
+      <DrawerContent className="!h-[600px]">
+        <div className="mx-auto w-2xl">
+          <DrawerHeader>
+            <DrawerTitle>
+              <div className="flex w-full items-center justify-center">
+                <Bot size={20} className="mr-2" />
+                Chatbot
+              </div>
+            </DrawerTitle>
+          </DrawerHeader>
+          <Conversation className="relative size-full rounded-2xl bg-slate-50" style={{ height: '380px' }}>
+            <ConversationContent>
+              {messages.map((message, index) =>
+                message.parts.map((part, partIndex) => {
+                  console.log(part);
+                  if (part.type === 'text' || part.type === 'dynamic-tool') {
+                    return (
+                      <Message from={index % 2 === 0 ? 'user' : 'assistant'} key={message.id}>
+                        <React.Fragment key={`${message.id}-${partIndex}`}>
+                          <MessageContent>
+                            {part.type === 'dynamic-tool' && part.toolName === 'get-task' ? (
+                              <div>
+                                <p className="font-bold">{(part as any).output?.structuredContent.title}</p>
+                                <p>{(part as any).output?.structuredContent.description}</p>
+                                <Link
+                                  className="underline"
+                                  href={`/?taskId=${(part as any).output?.structuredContent.id}`}
+                                >
+                                  View Task
+                                </Link>
+                              </div>
+                            ) : part.type === 'text' ? (
+                              (part as any).text
+                            ) : null}
+                          </MessageContent>
+                          <MessageAvatar
+                            src={index % 2 === 0 ? 'https://github.com/shadcn.png' : 'https://github.com/openai.png'}
+                          />
+                        </React.Fragment>
+                      </Message>
+                    );
+                  }
+                }),
+              )}
+            </ConversationContent>
+            <ConversationScrollButton />
+          </Conversation>
+          <div className="fixed bottom-[20px] mx-auto w-2xl">
+            <PromptInput
+              onSubmit={(e) => {
+                e.preventDefault();
+                sendMessage({ text: input });
+                setInput('');
+              }}
+            >
+              <PromptInputTextarea
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setInput(e.target.value)}
+                value={input}
+                placeholder="Type your message..."
+              />
+              <PromptInputToolbar>
+                <PromptInputTools>
+                  <PromptInputModelSelect onValueChange={setModel} value={model}>
+                    <PromptInputModelSelectTrigger>
+                      <PromptInputModelSelectValue />
+                    </PromptInputModelSelectTrigger>
+                    <PromptInputModelSelectContent>
+                      {models.map((model) => (
+                        <PromptInputModelSelectItem key={model.id} value={model.id}>
+                          {model.name}
+                        </PromptInputModelSelectItem>
+                      ))}
+                    </PromptInputModelSelectContent>
+                  </PromptInputModelSelect>
+                </PromptInputTools>
+                <PromptInputSubmit disabled={!input} />
+              </PromptInputToolbar>
+            </PromptInput>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      </DrawerContent>
+    </Drawer>
   );
 }
