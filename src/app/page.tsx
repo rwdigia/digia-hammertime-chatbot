@@ -1,10 +1,7 @@
 'use client';
 
 import { useChat } from '@ai-sdk/react';
-import { Bot } from 'lucide-react';
-import Link from 'next/link';
 import React, { useState } from 'react';
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer';
 import { Conversation, ConversationContent, ConversationScrollButton } from '@/components/ui/shadcn-io/ai/conversation';
 import { Message, MessageAvatar, MessageContent } from '@/components/ui/shadcn-io/ai/message';
 import {
@@ -19,6 +16,7 @@ import {
   PromptInputToolbar,
   PromptInputTools,
 } from '@/components/ui/shadcn-io/ai/prompt-input';
+import { Response } from '@/components/ui/shadcn-io/ai/response';
 
 const models = [{ id: 'gpt-5-chat', name: 'OpenAI GPT-5 Chat' }];
 
@@ -30,16 +28,17 @@ export default function HomePage() {
   return (
     <div className="flex h-screen flex-col items-center justify-center">
       <div>
-        <Conversation className="mb-4 h-[500px] w-[800px] rounded-2xl border border-slate-100">
+        <Conversation className="mb-4 h-[600px] w-[900px] rounded-2xl border border-slate-100">
           <ConversationContent>
             {messages.map((message, index) =>
               message.parts.map((part, partIndex) => {
-                console.log(part);
-                if (part.type === 'text' || part.type === 'dynamic-tool') {
+                if (part.type === 'text') {
                   return (
                     <Message from={index % 2 === 0 ? 'user' : 'assistant'} key={message.id}>
                       <React.Fragment key={`${message.id}-${partIndex}`}>
-                        <MessageContent>{part.type === 'text' ? (part as any).text : null}</MessageContent>
+                        <MessageContent>
+                          <Response key={`${message.id}-${partIndex}`}>{part.text}</Response>
+                        </MessageContent>
                         <MessageAvatar
                           src={index % 2 === 0 ? 'https://github.com/shadcn.png' : 'https://github.com/openai.png'}
                         />
@@ -47,6 +46,7 @@ export default function HomePage() {
                     </Message>
                   );
                 }
+                return null;
               }),
             )}
           </ConversationContent>
