@@ -27,13 +27,15 @@ jobs:
         run: |
           npm install
           npm run build
-          cp -r .next/standalone/. ./.next/
+          cp -r public .next/standalone/
+          cp -r .next/static .next/standalone/.next/
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: .
+          path: .next/standalone
+          include-hidden-files: true
 
   deploy:
     runs-on: ubuntu-latest
