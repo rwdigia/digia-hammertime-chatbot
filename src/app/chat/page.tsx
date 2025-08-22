@@ -36,7 +36,7 @@ export default function Page() {
   const [model, setModel] = useState<string>(models[0].id);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const renderParts = (part: any) => {
+  function renderParts(part: any) {
     switch (part.type) {
       case 'dynamic-tool': {
         return `**Tool:** ${part.toolName}
@@ -46,7 +46,7 @@ export default function Page() {
         return part.text;
       }
     }
-  };
+  }
 
   return (
     <div className="relative flex h-screen flex-col items-center justify-center bg-slate-50">

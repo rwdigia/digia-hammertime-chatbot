@@ -1,0 +1,15 @@
+{
+  "extends": ["next/core-web-vitals", "plugin:@typescript-eslint/recommended", "plugin:prettier/recommended"],
+  "rules": {
+    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-unused-vars": "warn",
+    "func-style": ["error", "declaration", { "allowArrowFunctions": false }],
+    "no-console": "warn",
+    "quotes": ["error", "single", { "avoidEscape": true }],
+    "react/jsx-curly-newline": ["error", { "multiline": "consistent", "singleline": "consistent" }],
+    "react/jsx-newline": ["error", { "prevent": true }],
+    "react-hooks/rules-of-hooks": "error"
+  },
+  "ignorePatterns": ["src/components/ui/**/*.ts", "src/components/ui/**/*.tsx", "src/lib/utils.ts"]
+}
