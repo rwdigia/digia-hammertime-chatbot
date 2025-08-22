@@ -35,6 +35,7 @@ export default function Page() {
   const [input, setInput] = useState('');
   const [model, setModel] = useState<string>(models[0].id);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const renderParts = (part: any) => {
     switch (part.type) {
       case 'dynamic-tool': {
