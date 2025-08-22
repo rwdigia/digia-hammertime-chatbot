@@ -27,7 +27,8 @@ jobs:
         run: |
           npm install
           npm run build
-          mv .next/standalone ./
+          cp -r public .next/standalone/
+          cp -r .next/static .next/standalone/.next/
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
