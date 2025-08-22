@@ -1,4 +1,4 @@
-![Demo of app](docs/intro.gif)
+# Digia Hammertime Chatbot
 
 A minimal chatbot on [Next.js](https://nextjs.org/) with [AI SDK](https://ai-sdk.dev/providers/ai-sdk-providers/azure)
 and [Azure AI Foundry](https://ai.azure.com/).
