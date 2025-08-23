@@ -1,6 +1,13 @@
 import { azure } from '@ai-sdk/azure';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
-import { UIMessage, convertToModelMessages, experimental_createMCPClient, stepCountIs, streamText } from 'ai';
+import {
+  UIMessage,
+  convertToModelMessages,
+  experimental_createMCPClient,
+  hasToolCall,
+  stepCountIs,
+  streamText,
+} from 'ai';
 import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
 
@@ -32,7 +39,7 @@ export const POST = auth(async function POST(req) {
     model: azure('gpt-5-chat'),
     tools: await McpClient.tools(),
     messages: convertToModelMessages(messages),
-    stopWhen: stepCountIs(2),
+    stopWhen: [stepCountIs(2), hasToolCall('roll-dice')],
   });
 
   if (req.auth) return result.toUIMessageStreamResponse();

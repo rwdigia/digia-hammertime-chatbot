@@ -5,6 +5,7 @@ import { signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { redirect } from 'next/navigation';
 import React, { useState } from 'react';
+import Dice from '@/components/Dice';
 import { Button } from '@/components/ui/button';
 import { Conversation, ConversationContent, ConversationScrollButton } from '@/components/ui/shadcn-io/ai/conversation';
 import { Message, MessageAvatar, MessageContent } from '@/components/ui/shadcn-io/ai/message';
@@ -35,7 +36,6 @@ export default function Page() {
   const [input, setInput] = useState('');
   const [model, setModel] = useState<string>(models[0].id);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function renderParts(part: any) {
     switch (part.type) {
       case 'dynamic-tool': {
@@ -49,44 +49,41 @@ export default function Page() {
   }
 
   return (
-    <div className="flex h-screen flex-col items-center justify-center">
-      <div className="relative h-19 w-full">
-        <Image className="absolute top-5 left-5" src="/digia-logo.svg" alt="Digia logo" width={85} height={34} />
-        <Button className="absolute top-5 right-5" variant="outline" onClick={() => signOut({ redirectTo: '/' })}>
-          Sign Out
-        </Button>
-      </div>
-      <div className="w-full max-w-[900px] flex-grow">
-        <Conversation className="mb-4 h-full w-auto bg-white">
+    <div className="relative flex h-screen flex-col items-center justify-center bg-slate-50">
+      <Image className="absolute top-5 left-5" src="/digia-logo.svg" alt="Digia logo" width={85} height={34} />
+      <Button className="absolute top-5 right-5" variant="outline" onClick={() => signOut({ redirectTo: '/' })}>
+        Sign Out
+      </Button>
+      <div className="w-full max-w-[900px] p-4">
+        <Conversation className="mb-4 h-[600px] rounded-2xl border border-slate-100 bg-white">
           <ConversationContent>
             {messages.map((message) => {
               return (
                 <Message key={message.id} from={message.role}>
-                  <MessageContent>
+                  <MessageContent className="group-[.is-assistant]:bg-transparent group-[.is-assistant]:text-slate-600 group-[.is-user]:bg-slate-200 group-[.is-user]:text-slate-600">
                     {message.parts?.map((part, index) => {
-                      // if (part.type === 'dynamic-tool' && part.toolName === 'roll-dice') {
-                      //   return <Dice number={parseInt(part.text) || 1} key={`${message.id}-${index}`} />;
-                      // }
+                      if (
+                        part.type === 'dynamic-tool' &&
+                        part.toolName === 'roll-dice' &&
+                        part.state === 'output-available'
+                      ) {
+                        return (
+                          <React.Fragment key={`${message.id}-${index}`}>
+                            {/* @ts-expect-error TODO */}
+                            <Dice roll={part?.output?.content?.[0]?.text} />
+                          </React.Fragment>
+                        );
+                      }
                       return <Response key={`${message.id}-${index}`}>{renderParts(part)}</Response>;
                     })}
                   </MessageContent>
-                  <MessageAvatar
-                    src={
-                      message.role === 'user'
-                        ? session?.data?.user?.image
-                          ? session.data.user.image
-                          : 'https://github.com/shadcn.png'
-                        : 'https://github.com/openai.png'
-                    }
-                  />
+                  {message.role === 'user' && <MessageAvatar src="https://github.com/shadcn.png" />}
                 </Message>
               );
             })}
           </ConversationContent>
           <ConversationScrollButton />
         </Conversation>
-      </div>
-      <div className="pb w-full max-w-[900px] p-3 md:pb-10">
         <PromptInput
           onSubmit={(e) => {
             e.preventDefault();
