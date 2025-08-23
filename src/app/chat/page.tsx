@@ -69,7 +69,13 @@ export default function Page() {
                     })}
                   </MessageContent>
                   <MessageAvatar
-                    src={message.role === 'user' ? 'https://github.com/shadcn.png' : 'https://github.com/openai.png'}
+                    src={
+                      message.role === 'user'
+                        ? session?.data?.user?.image
+                          ? session.data.user.image
+                          : 'https://github.com/shadcn.png'
+                        : 'https://github.com/openai.png'
+                    }
                   />
                 </Message>
               );
