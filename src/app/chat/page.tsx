@@ -49,13 +49,15 @@ export default function Page() {
   }
 
   return (
-    <div className="relative flex h-screen flex-col items-center justify-center bg-slate-50">
-      <Image className="absolute top-5 left-5" src="/digia-logo.svg" alt="Digia logo" width={85} height={34} />
-      <Button className="absolute top-5 right-5" variant="outline" onClick={() => signOut({ redirectTo: '/' })}>
-        Sign Out
-      </Button>
-      <div>
-        <Conversation className="mb-4 h-[600px] w-[900px] rounded-2xl border border-slate-100 bg-white">
+    <div className="flex h-screen flex-col items-center justify-center">
+      <div className="relative h-19 w-full">
+        <Image className="absolute top-5 left-5" src="/digia-logo.svg" alt="Digia logo" width={85} height={34} />
+        <Button className="absolute top-5 right-5" variant="outline" onClick={() => signOut({ redirectTo: '/' })}>
+          Sign Out
+        </Button>
+      </div>
+      <div className="w-full max-w-[900px] flex-grow">
+        <Conversation className="mb-4 h-full w-auto bg-white">
           <ConversationContent>
             {messages.map((message) => {
               return (
@@ -83,6 +85,8 @@ export default function Page() {
           </ConversationContent>
           <ConversationScrollButton />
         </Conversation>
+      </div>
+      <div className="pb w-full max-w-[900px] p-3 md:pb-10">
         <PromptInput
           onSubmit={(e) => {
             e.preventDefault();
