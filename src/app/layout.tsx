@@ -9,8 +9,8 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: 'Digia Hammertime Chatbot',
-  description: 'Digia Hammertime Chatbot',
+  title: 'Digia | Hammertime Chatbot',
+  description: 'Digia | Hammertime Chatbot',
 };
 
 export default async function RootLayout({
