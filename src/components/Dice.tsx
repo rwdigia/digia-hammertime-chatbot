@@ -14,7 +14,7 @@ function Cube({ roll }: { roll: number }) {
 
   return (
     <mesh>
-      <RoundedBox args={[1.2, 1.2, 1.2]} radius={0.1} smoothness={2} castShadow>
+      <RoundedBox args={[1.7, 1.7, 1.7]} radius={0.2} smoothness={2} castShadow>
         <meshStandardMaterial>
           <RenderTexture attach="map" anisotropy={16}>
             <PerspectiveCamera makeDefault manual aspect={1 / 1} position={[0, 0, 5]} />
@@ -33,7 +33,7 @@ function Cube({ roll }: { roll: number }) {
 
 export default function Dice({ roll }: { roll: number }) {
   return (
-    <div className="h-[400px]">
+    <div className="h-[300px]">
       <Canvas camera={{ position: [5, 5, 5], fov: 25 }}>
         <ambientLight intensity={5} />
         <Cube roll={roll} />

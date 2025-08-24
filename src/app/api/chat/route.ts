@@ -1,4 +1,5 @@
 import { azure } from '@ai-sdk/azure';
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 import {
   UIMessage,
@@ -30,6 +31,21 @@ export const POST = auth(async function POST(req) {
       },
     },
   );
+
+  /*
+  const client = new Client({ name: 'mcp-client-cli', version: '1.0.0' });
+  await client.connect(transport);
+  const tools = await client.listTools();
+  console.log('Available tools:', tools);
+  [
+    {
+      name: 'roll-dice',
+      title: 'Roll Dice',
+      description: 'Rolls a dice and gives a random result from 1 to 6',
+      inputSchema: ...
+    }
+  ];
+  */
 
   const McpClient = await experimental_createMCPClient({
     transport,
