@@ -33,12 +33,17 @@ function Cube({ roll }: { roll: number }) {
 
 export default function Dice({ roll }: { roll: number }) {
   return (
-    <div className="h-[300px]">
-      <Canvas camera={{ position: [5, 5, 5], fov: 25 }}>
-        <ambientLight intensity={5} />
-        <Cube roll={roll} />
-        <OrbitControls minPolarAngle={0} maxPolarAngle={Math.PI / 2.1} />
-      </Canvas>
-    </div>
+    <>
+      <div className="h-[300px]">
+        <Canvas camera={{ position: [5, 5, 5], fov: 25 }}>
+          <ambientLight intensity={5} />
+          <Cube roll={roll} />
+          <OrbitControls minPolarAngle={0} maxPolarAngle={Math.PI / 2.1} />
+        </Canvas>
+      </div>
+      <div className="text-center text-sm">
+        <span className="font-bold">Tip!</span> Try spinning the dice.
+      </div>
+    </>
   );
 }
